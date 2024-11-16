@@ -27,10 +27,38 @@ namespace UnrealSharp
         public void UpdateAddresses()
         {
             {
+
+                List<string> addresses = new List<string>();
+                addresses.Add("74 09 48 8D 15 ? ? ? ? EB 16");
+                addresses.Add("74 09 48 8D ? ? 48 8D ? ? E8");
+                addresses.Add("74 09 48 8D ? ? ? 48 8D ? ? E8");
+                addresses.Add("74 09 48 8D ? ? 49 8B ? E8");
+                addresses.Add("74 09 48 8D ? ? ? 49 8B ? E8");
+                addresses.Add("74 09 48 8D ? ? 48 8B ? E8");
+                addresses.Add("74 09 48 8D ? ? ? 48 8B ? E8");
+
+                /*
                 GNamesPattern = Memory.FindPattern("74 09 48 8D 15 ? ? ? ? EB 16");
                 var offset = Memory.ReadProcessMemory<int>(GNamesPattern + 5);
                 GNames = GNamesPattern + offset + 9;
                 if (UEObject.GetName(3) != "ByteProperty") throw new Exception("bad GNames");
+                */
+
+                foreach (var address in addresses)
+                {
+                    GNamesPattern = Memory.FindPattern(address);
+                    Console.WriteLine("GNamesPattern found at: " + GNamesPattern.ToString("X"));
+                    if (GNamesPattern != 0)
+                    {
+                        var offset = Memory.ReadProcessMemory<int>(GNamesPattern + 5);
+                        GNames = GNamesPattern + offset + 9;
+                        if (UEObject.GetName(3) != "ByteProperty") break; // check if it's the right address
+                        Console.WriteLine("GNames found at: " + GNames.ToString("X"));
+                    }
+                }
+
+                if (UEObject.GetName(3) != "ByteProperty") throw new Exception("bad GNames");
+
                 //DumpGNames();
             }
             {
